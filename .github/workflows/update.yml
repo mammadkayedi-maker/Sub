@@ -1,25 +1,10 @@
-name: Update v2ray_Mammad
+name: v2ray_Mammad
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "*/30 * * * *"
-
-permissions:
-  contents: write
 
 jobs:
-  update:
+  test:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Update subscription
-        run: |
-          echo "v2ray_Mammad subscription update"
-          git config user.name "v2ray_Mammad"
-          git config user.email "actions@github.com"
-          git add .
-          git diff --cached --quiet || git commit -m "Update v2ray_Mammad"
-          git push
+      - run: echo "v2ray_Mammad is working!"
