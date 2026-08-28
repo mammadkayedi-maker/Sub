@@ -1,9 +1,9 @@
 name: Update v2ray_Mammad
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: "*/30 * * * *"
-  workflow_dispatch:
 
 permissions:
   contents: write
@@ -13,67 +13,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Download VLESS configs
+      - name: Update subscription
         run: |
-          curl -L --fail \
-            "https://raw.githubusercontent.com/morpheusadam/v2ray-config/main/subs/bundles/vless.txt" \
-            -o source.txt
-
-      - name: Build subscription
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          from urllib.parse import urlsplit, urlunsplit, quote
-
-          data = Path("source.txt").read_text(errors="ignore")
-
-          configs = []
-          seen = set()
-
-          for line in data.splitlines():
-              line = line.strip()
-
-              if not line.startswith("vless://"):
-                  continue
-
-              base = line.split("#", 1)[0]
-
-              if base in seen:
-                  continue
-
-              seen.add(base)
-              configs.append(line)
-
-          output = []
-
-          for i, config in enumerate(configs, 1):
-              parts = urlsplit(config)
-
-              name = f"v2ray_Mammad | کانال تلگرام: v2ray_Mammad | VLESS {i:03d}"
-
-              output.append(
-                  urlunsplit(
-                      parts._replace(
-                          fragment=quote(name, safe="@")
-                      )
-                  )
-              )
-
-          Path("v2ray_Mammad").write_text(
-              "\n".join(output) + "\n",
-              encoding="utf-8"
-          )
-
-          print(f"Saved {len(output)} configs")
-          PY
-
-      - name: Commit changes
-        run: |
+          echo "v2ray_Mammad subscription update"
           git config user.name "v2ray_Mammad"
           git config user.email "actions@github.com"
-          git add v2ray_Mammad
-          git diff --cached --quiet || git commit -m "Auto update v2ray_Mammad"
+          git add .
+          git diff --cached --quiet || git commit -m "Update v2ray_Mammad"
           git push
